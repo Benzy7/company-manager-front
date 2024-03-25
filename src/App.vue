@@ -3,11 +3,16 @@
 </template>
 
 <script>
-export default {
-  // Add any necessary logic or styles here
-};
+export default {};
 </script>
 
 <style>
-/* Add global styles here */
+#app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
 </style>

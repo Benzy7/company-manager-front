@@ -26,11 +26,13 @@
                         <form @submit.prevent="loginUser">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" v-model="email" required>
+                                <input type="email" class="form-control" id="email" v-model="email">
+                                <!-- <div v-if="!$v.email.required" class="text-danger">Email is required.</div>
+                                <div v-else-if="!$v.email.email" class="text-danger">Invalid email format.</div> -->
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Mot de passe</label>
-                                <input type="password" class="form-control" id="password" v-model="password" required>
+                                <input type="password" class="form-control" id="password" v-model="password">
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="form-check">
@@ -65,6 +67,7 @@
 <script>
 import { mapActions } from 'vuex';
 import apiClient from '@/services/api';
+import { required, email } from '@vuelidate/validators';
 
 export default {
     data() {
@@ -74,10 +77,21 @@ export default {
             rememberMe: false,
         };
     },
+    validations() {
+        return {
+            email: { required, email },
+            password: { required },
+        };
+    },
     methods: {
         ...mapActions('auth', ['login']),
         async loginUser() {
             try {
+                console.log(this.$v);
+                console.log(this.$v.email); 
+                if (this.$v.$invalid) {
+                    return;
+                }
                 const response = await apiClient.post('/auth/login/', {
                     email: this.email,
                     password: this.password,
@@ -85,7 +99,7 @@ export default {
                 const token = response.data.access;
                 console.log(token);
                 await this.login(token);
-                this.$router.push('/dashboard');
+                this.$router.push('/dashboard/company');
             } catch (error) {
                 console.error(error);
             }
